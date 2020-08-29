@@ -1,0 +1,3 @@
+TOKEN = ''
+DEFAULT_PREFIX = 'ai.'
+LANGUAGE = 'ru_RU'
