@@ -1,3 +1,3 @@
-TOKEN = ''
+TOKEN = 'NzQ4NTQzNDY5MDAxMjQ0ODEz.X0e9bg.rOEH_pzfSiAeNf2bhgzrJVFHy0o'
 DEFAULT_PREFIX = 'ai.'
 LANGUAGE = 'ru_RU'

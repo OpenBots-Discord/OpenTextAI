@@ -96,7 +96,7 @@ async def s(ctx):
                     pass
                 else:
                     f.write(clean_msg.lower().strip() + '\n')
-        await ctx.send(done_embed(successful_index()))
+        await ctx.send(embed=done_embed(successful_index()))
 
 
 @bot.command()
@@ -151,29 +151,29 @@ async def d(ctx):
 @commands.cooldown(1, 5, commands.BucketType.user)
 @bot.command(aliases=['generate', 'gen'])
 async def g(ctx, mode=''):
-    try:
-        if mode == "1":
-            result = get_generated_line(ctx.message, 1, 4)
-        elif mode == "2":
-            result = get_generated_line(ctx.message, 4, 8)
-        elif mode == "3":
-            result = get_generated_line(ctx.message, 8, 15)
-        else:
-            result = get_generated_line(ctx.message)
+    # try:
+    if mode == "1":
+        result = get_generated_line(ctx.message, 1, 4)
+    elif mode == "2":
+        result = get_generated_line(ctx.message, 4, 8)
+    elif mode == "3":
+        result = get_generated_line(ctx.message, 8, 15)
+    else:
+        result = get_generated_line(ctx.message)
 
-        chance = randint(1, 20)
-        if chance >= 1 and chance <= 10:
-            result = result.capitalize()
-        elif chance >= 11 and chance <= 15:
-            result = result.lower()
-        elif chance >= 16 and chance <= 20:
-            result = result.upper()
+    chance = randint(1, 20)
+    if chance >= 1 and chance <= 10:
+        result = result.capitalize()
+    elif chance >= 11 and chance <= 15:
+        result = result.lower()
+    elif chance >= 16 and chance <= 20:
+        result = result.upper()
 
-        embed = discord.Embed(
-            color=0x6cdbe0, title=gen_title(), description=result)
-        await ctx.send(embed=embed)
-    except:
-        await ctx.send(embed=error_embed(too_late_gen()))
+    embed = discord.Embed(
+        color=0x6cdbe0, title=gen_title(), description=result)
+    await ctx.send(embed=embed)
+    # except:
+    #     await ctx.send(embed=error_embed(too_late_gen()))
 
 
 @bot.event

@@ -10,6 +10,7 @@ __pycache__/
 
 config.py
 
+chats.json
 
 # Distribution / packaging
 .Python
