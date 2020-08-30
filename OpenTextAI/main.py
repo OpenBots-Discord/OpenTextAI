@@ -228,10 +228,10 @@ async def on_message(msg):
 @s.error
 async def errors(ctx, error):
     if isinstance(error, commands.MissingPermissions):
-        embed = Utilities.error_embed(missing_perms())
+        embed = error_embed(missing_perms())
         await ctx.send(embed=embed)
     if isinstance(error, commands.BotMissingPermissions):
-        embed = Utilities.error_embed(missing_bot_perms())
+        embed = error_embed(missing_bot_perms())
         await ctx.send(embed=embed)
 
 
