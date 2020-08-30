@@ -8,10 +8,6 @@ __pycache__/
 
 **/.DS_Store
 
-config.py
-
-chats.json
-
 # Distribution / packaging
 .Python
 build/
@@ -133,3 +129,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+OpenTextAI/config.py
+OpenTextAI/data/chats.json
