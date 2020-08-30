@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-/OpenTextAI/samples/*.*
+/OpenTextAI/samples/*.txt
 
 # C extensions
 *.so
