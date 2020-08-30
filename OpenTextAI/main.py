@@ -62,6 +62,7 @@ def get_generated_line(msg, minword=2, maxword=15, minsym=5, maxsym=150):
     return clean_result
 
 
+@commands.cooldown(1, 60, commands.BucketType.channel)
 @commands.has_permissions(administrator=True)
 @bot.command(aliases=['set'])
 async def s(ctx):
