@@ -105,6 +105,7 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 
+@commands.cooldown(1, 5, commands.BucketType.user)
 @bot.command(aliases=['burgut'])
 async def b(ctx):
     try:
@@ -126,6 +127,7 @@ async def b(ctx):
         await ctx.send(embed=error_embed(too_late_gen()))
 
 
+@commands.cooldown(1, 5, commands.BucketType.user)
 @bot.command(aliases=['dialog', 'dialogue'])
 async def d(ctx):
     try:
@@ -145,14 +147,15 @@ async def d(ctx):
         await ctx.send(embed=error_embed(too_late_gen()))
 
 
+@commands.cooldown(1, 5, commands.BucketType.user)
 @bot.command(aliases=['generate', 'gen'])
 async def g(ctx, mode=''):
     try:
-        if mode == "s" or mode == "1" or mode == "small":
+        if mode == "1":
             result = get_generated_line(ctx.message, 1, 4)
-        elif mode == "m" or mode == "2" or mode == "meduim":
+        elif mode == "2":
             result = get_generated_line(ctx.message, 4, 8)
-        elif mode == "l" or mode == "3" or mode == "large":
+        elif mode == "3":
             result = get_generated_line(ctx.message, 8, 15)
         else:
             result = get_generated_line(ctx.message)
