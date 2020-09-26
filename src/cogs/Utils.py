@@ -42,14 +42,6 @@ class Utils(commands.Cog, name='Utils'):
 
             return langs[str(message.guild.id)]
 
-    def get_chat(message):
-        with open(filepath + '/../data/chats.json', 'r') as f:
-            ch = json.load(f)
-        try:
-            return ch[str(message.guild.id)]
-        except:
-            pass
-
 
 def setup(bot):
     bot.add_cog(Utils(bot))

@@ -21,7 +21,7 @@ with open(dirname(abspath(__file__)) + '/../data/config.json') as f:
 
 def get_generated_line(msg, minword=2, maxword=15, minsym=5, maxsym=150):
     samples_txt = mc.util.load_txt_samples(
-        filepath + '/../samples/{0}.txt'.format(Utils.get_chat(msg)), separator="\n")
+        filepath + '/../samples/{0}.txt'.format(msg.guild.id), separator="\\")
     generator = mc.StringGenerator(samples=samples_txt)
 
     result = generator.generate_string(
@@ -45,44 +45,24 @@ class TextGen(commands.Cog, name='TextGen'):
 
     # @commands.cooldown(1, 60, commands.BucketType.channel)
     @commands.has_permissions(administrator=True)
-    @commands.command(aliases=['set'])
-    async def s(self, ctx):
+    @commands.command()
+    async def train(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
+        await ctx.send('ок ща')
+        f = open(
+            filepath + '/../samples/{0}.txt'.format(ctx.message.guild.id), 'w')
 
-        with open(filepath + '/../data/chats.json', 'r') as f:
-            logs = json.load(f)
-
-        if str(ctx.guild.id) in logs:
-            logs.pop(str(ctx.guild.id))
-
-            with open(filepath + '/../data/chats.json', 'w') as f:
-                json.dump(logs, f, indent=4)
-            await ctx.send(embed=Utils.done_embed(locales[lang]['etc']['reset_chat_msg']))
-        else:
-            logs[str(ctx.guild.id)] = ctx.message.channel.id
-
-            with open(filepath + '/../data/chats.json', 'w') as f:
-                json.dump(logs, f, indent=4)
-            await ctx.send(embed=Utils.done_embed(locales[lang]['etc']['set_chat_msg']))
-
-            f = open(
-                filepath + '/../samples/{0}.txt'.format(Utils.get_chat(ctx.message)), 'w')
-            messages = await ctx.message.channel.history(limit=15000).flatten()
-            for i in messages:
-                if i.author.bot:
+        for channel in ctx.guild.text_channels:
+            messages = await channel.history(limit=15000).flatten()
+            for message in messages:
+                if message.author.bot:
                     pass
                 else:
-                    clean_msg = re.sub(r'\<[^)]*\>', '', i.content)
-                    if '\n' in clean_msg:
-                        pass
-                    elif clean_msg == '':
-                        pass
-                    else:
-                        f.write(clean_msg.lower().strip() + '\n')
-            await ctx.send(embed=Utils.done_embed(locales[lang]['gen']['successful_index']))
+                    f.write(message.content.lower().strip() + '\\')
+        await ctx.send(embed=Utils.done_embed(locales[lang]['gen']['successful_index']))
 
-    @ commands.cooldown(1, 5, commands.BucketType.user)
-    @ commands.command(aliases=['burgrut'])
+    # @ commands.cooldown(1, 5, commands.BucketType.user)
+    @ commands.command(aliases=['bugurt'])
     async def b(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
 
@@ -104,9 +84,9 @@ class TextGen(commands.Cog, name='TextGen'):
             embed.set_image(url='attachment://{0}.jpg'.format(face))
             await ctx.send(file=file, embed=embed)
         except Exception:
-            await ctx.send(embed=Utils.error_embed(locales[lang]['gen']['too_late_gen']))
+            await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
-    @ commands.cooldown(1, 5, commands.BucketType.user)
+    # @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['dialog', 'dialogue'])
     async def d(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
@@ -126,7 +106,7 @@ class TextGen(commands.Cog, name='TextGen'):
             await ctx.send(embed=embed)
 
         except Exception:
-            await ctx.send(embed=Utils.error_embed(locales[lang]['gen']['too_late_gen']))
+            await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
     # @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['generate', 'g'])
@@ -156,50 +136,72 @@ class TextGen(commands.Cog, name='TextGen'):
             pass
         else:
             try:
-                cnt = msg.content.split()
-                is_mentioned = False
-                for i in cnt:
-                    if i == '<@!{0}>'.format(self.bot.user.id):
-                        is_mentioned = True
+                msg_chance = randint(1, 30)
+                if msg_chance == 30:
+                    result = get_generated_line(msg)
+                    chance = randint(1, 20)
+                    if chance >= 1 and chance <= 6:
+                        result = result.capitalize()
+                    elif chance >= 7 and chance <= 12:
+                        result = result.lower()
+                    elif chance >= 13 and chance <= 20:
+                        result = result.upper()
+                    await msg.channel.send(result)
 
-                if msg.channel.id == Utils.get_chat(msg):
-                    msg_chance = randint(1, 30)
-                    if msg_chance == 30:
-                        result = get_generated_line(msg)
-                        chance = randint(1, 20)
-                        if chance >= 1 and chance <= 6:
-                            result = result.capitalize()
-                        elif chance >= 7 and chance <= 12:
-                            result = result.lower()
-                        elif chance >= 13 and chance <= 20:
-                            result = result.upper()
-                        await msg.channel.send(result)
+                elif '<@!{0}>'.format(self.bot.user.id) in msg.content:
+                    result = get_generated_line(msg)
+                    chance = randint(1, 20)
+                    if chance >= 1 and chance <= 5:
+                        result = result.capitalize()
+                    elif chance >= 6 and chance <= 12:
+                        result = result.lower()
+                    elif chance >= 13 and chance <= 20:
+                        result = result.upper()
+                    await msg.channel.send(result)
 
-                    if is_mentioned:
-                        result = get_generated_line(msg, 1, 30, 3, 200)
-                        chance = randint(1, 20)
-                        if chance >= 1 and chance <= 10:
-                            result = result.capitalize()
-                        elif chance >= 11 and chance <= 15:
-                            result = result.lower()
-                        elif chance >= 16 and chance <= 20:
-                            result = result.upper()
-                        await msg.channel.send(result)
+                else:
+                    msg_chance = randint(1, 10)
+                    if msg_chance == 1:
+                        for kw in config['keywords']:
+                            if kw in msg.content:
+                                result = get_generated_line(msg)
+                                chance = randint(1, 20)
+                                if chance >= 1 and chance <= 5:
+                                    result = result.capitalize()
+                                elif chance >= 6 and chance <= 12:
+                                    result = result.lower()
+                                elif chance >= 13 and chance <= 20:
+                                    result = result.upper()
+                                await msg.channel.send(result)
+                                break
 
-                    if msg.author.bot:
+                if msg.author.bot:
+                    pass
+                else:
+                    f = open(
+                        filepath + '/../samples/{0}.txt'.format(Utils.get_chat(msg)), 'a')
+                    if '\n' in msg.content:
+                        pass
+                    elif msg.content == '':
                         pass
                     else:
-                        f = open(
-                            filepath + '/../samples/{0}.txt'.format(Utils.get_chat(msg)), 'a')
-                        if '\n' in msg.content:
-                            pass
-                        elif msg.content == '':
-                            pass
-                        else:
-                            f.write(msg.content.lower().strip() + '\n')
-                    await self.bot.process_commands(msg)
+                        f.write(msg.content.lower().strip() + '\n')
+                await self.bot.process_commands(msg)
             except:
                 pass
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        f = open(
+            filepath + '/../samples/{0}.txt'.format(guild.id), 'w')
+
+        for channel in guild.text_channels:
+            messages = await channel.history(limit=15000).flatten()
+            for message in messages:
+                if message.author.bot:
+                    pass
+                else:
+                    f.write(message.content.lower().strip() + '\\')
 
 
 def setup(bot):

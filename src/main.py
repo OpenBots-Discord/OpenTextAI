@@ -22,10 +22,12 @@ bot = Bot(command_prefix=config['default_prefix'], help_command=None)
 
 filepath = dirname(abspath(__file__))
 
+a = discord.utils.get()
+
 
 @bot.event
 async def on_ready():
-    for filename in os.listdir('./src/cogs/'):
+    for filename in os.listdir(filepath + '/cogs/'):
         if filename.endswith('.py'):
             bot.load_extension('cogs.{0}'.format(filename[:-3]))
     print('Ready!')

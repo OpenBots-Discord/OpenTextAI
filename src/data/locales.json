@@ -2,12 +2,12 @@
     "ru_RU": {
         "help": {
             "help_title": "Список команд",
-            "help_text": "**Синтаксис: <...> - необязательный аргумент, 1|2|3 - условное \"или\"**\n`ai.s|set` - установить текущий канал как чат по умолчанию (где будет происходить индексация сообщений).\n`ai.g|gen|genetate <1|2|3>` - сгенерировать случайную фразу, длина зависит от выбранного уровня: 1, 2 или 3; по умолчанию 2.\n`ai.b|burgurt` - сгенерировать \"бургурт\". Подробнее о них вы сможете узнать тут: https://vk.com/bugurt_thread.\n`ai.d|dialog|dialogue` - сгенерировать случайный диалог."
+            "help_text": "**Синтаксис: <...> - необязательный аргумент, 1|2|3 - условное \"или\"**\n`ai.train` - проиндексировать все сообщения на сервере.\n`ai.g|gen|generate <1|2|3>` - сгенерировать случайную фразу, длина зависит от выбранного уровня: 1, 2 или 3; по умолчанию 2.\n`ai.b|bugurt` - сгенерировать \"бугурт\". Подробнее о них вы сможете узнать тут: https://vk.com/bugurt_thread.\n`ai.d|dialog|dialogue` - сгенерировать случайный диалог.\n`ai.f|fresko` - цитату Жака Фреско."
 
         },
 
         "etc": {
-            "on_join_message": "Спасибо, что выбрали меня. Я - бот с открытым исходным кодом OpenTextAI, который умеет генерировать сообщения на основе сообщений вашего чата. Для того, чтобы начать, пропишите ai.help. **Если вы обнаружили баг, неисправность или же вы хотите предложить идею, сообщите нам!** https://discord.gg/PAWwUB5",
+            "on_join_message": "Спасибо, что выбрали меня. Я - бот с открытым исходным кодом OpenTextAI, который умеет генерировать сообщения на основе сообщений вашего чата. Для того, чтобы начать, пропишите ai.help. **Если вы обнаружили баг, неисправность или же вы хотите предложить идею, сообщите нам!** https://discord.gg/PAWwUB5\n\nКстати, я уже начал записывать ваши сообщения, подождите",
             "set_chat_msg": "Данный чат успешно выбран как чат по умолчанию. Сейчас началась запись ваших предыдущих сообщений, это необходимо для того, чтобы бот лучше обучился. Во время индексации нельзя пользоваться командами генерации текста, однако сообщения обычно записываются в течении минуты. После успешной записи я сам оповещу об этом.",
             "reset_chat_msg": "Чат по умолчанию успешно сброшен."
         },
@@ -15,7 +15,7 @@
         "errors": {
             "missing_perms": "У вас недостаточно прав для выполнения этой команды.",
             "missing_bot_perms": "У меня недостаточно прав для выполнения этой команды. Пожалуйста, предоставьте все права для роли, которые позволят выполнить данную команду.",
-            "too_late_gen": "Ошибка: чат ещё индескируется"
+            "too_late_gen": "Ошибка: не удалось сгенерировать сообщение"
 
         },
 
@@ -32,7 +32,7 @@
     "en_EN": {
         "help": {
             "help_title": "List of commands",
-            "help_text": "**Syntax: <...> - optional argument, 1|2|3 - conditional\"or\"**\n`ai.s|set` - set the current channel as the default chat (where messages will be indexed).\n`ai.g|gen|genetate <1|2|3>`- generate a random phrase, the length depends on the selected level: 1, 2 or 3; by default 2.\n`ai.b | burgurt` - generate \"burgurt\". You can learn more about them here: https://vk.com/bugurt_thread.\n`ai.d|dialog|dialogue` - generate a random dialogue."
+            "help_text": "**Syntax: <...> - optional argument, 1|2|3 - conditional\"or\"**\n`ai.s|set` - set the current channel as the default chat (where messages will be indexed).\n`ai.g|gen|generate <1|2|3>`- generate a random phrase, the length depends on the selected level: 1, 2 or 3; by default 2.\n`ai.b | burgurt` - generate \"burgurt\". You can learn more about them here: https://vk.com/bugurt_thread.\n`ai.d|dialog|dialogue` - generate a random dialogue."
 
         },
 
