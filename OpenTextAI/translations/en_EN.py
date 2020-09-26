@@ -4,14 +4,14 @@ To get started, type in ai.help.'
 
 
 def help_title():
-    return 'List of commands'
+    return 'List of commandsЖ'
 
 
 def help_text():
     return '**Syntax: <...> - optional argument, 1|2|3 - conditional "or"**\n\
 `ai.s|set` - set the current channel as the default chat (where messages will be indexed).\n\
-`ai.g|gen|genetate <1|2|3>` - generate a random phrase, the length depends on the selected level: 1, 2 or 3; default is 2.\n\
-`ai.b|burgut` - generate "burgut". You can learn more about them here: https://vk.com/bugurt_thread.\n\
+`ai.g|gen|generate <1|2|3>` - generate a random phrase, the length depends on the selected level: 1, 2 or 3; default is 2.\n\
+`ai.b|bugurt` - generate "bugurt". You can learn more about them here: https://vk.com/bugurt_thread.\n\
 `ai.d|dialog|dialogue` - generate a random dialogue.'
 
 
@@ -20,7 +20,7 @@ def gen_title():
 
 
 def burgut_title():
-    return 'Burgut'
+    return 'Bugrut'
 
 
 def dialogue_title():
