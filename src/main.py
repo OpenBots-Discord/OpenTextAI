@@ -22,8 +22,6 @@ bot = Bot(command_prefix=config['default_prefix'], help_command=None)
 
 filepath = dirname(abspath(__file__))
 
-a = discord.utils.get()
-
 
 @bot.event
 async def on_ready():
