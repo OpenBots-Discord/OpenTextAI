@@ -2,20 +2,20 @@
     "ru_RU": {
         "help": {
             "help_title": "Список команд",
-            "help_text": "**Синтаксис: <...> - необязательный аргумент, 1|2|3 - условное \"или\"**\n`ai.train` - проиндексировать все сообщения на сервере.\n`ai.g|gen|generate <1|2|3>` - сгенерировать случайную фразу, длина зависит от выбранного уровня: 1, 2 или 3; по умолчанию 2.\n`ai.b|bugurt` - сгенерировать \"бугурт\". Подробнее о них вы сможете узнать тут: https://vk.com/bugurt_thread.\n`ai.d|dialog|dialogue` - сгенерировать случайный диалог.\n`ai.f|fresko` - цитату Жака Фреско."
+            "help_text": "**Синтаксис: <...> - необязательный аргумент, 1|2|3 - условное \"или\"**\n`ai.train` - проиндексировать все сообщения на сервере. **ТОЛЬКО ДЛЯ АДМИНИСТРАТОРОВ**\n`ai.g|gen|generate <1|2|3>` - сгенерировать случайную фразу, длина зависит от выбранного уровня: 1, 2 или 3; по умолчанию 2.\n`ai.b|bugurt` - сгенерировать \"бугурт\". Подробнее о них вы сможете узнать тут: https://vk.com/bugurt_thread.\n`ai.d|dialog|dialogue` - сгенерировать случайный диалог.\n`ai.f|fresko` - цитату Жака Фреско."
 
         },
 
         "etc": {
             "on_join_message": "Спасибо, что выбрали меня. Я - бот с открытым исходным кодом OpenTextAI, который умеет генерировать сообщения на основе сообщений вашего чата. Для того, чтобы начать, пропишите ai.help. **Если вы обнаружили баг, неисправность или же вы хотите предложить идею, сообщите нам!** https://discord.gg/PAWwUB5\n\nКстати, я уже начал записывать ваши сообщения, подождите",
-            "set_chat_msg": "Данный чат успешно выбран как чат по умолчанию. Сейчас началась запись ваших предыдущих сообщений, это необходимо для того, чтобы бот лучше обучился. Во время индексации нельзя пользоваться командами генерации текста, однако сообщения обычно записываются в течении минуты. После успешной записи я сам оповещу об этом.",
-            "reset_chat_msg": "Чат по умолчанию успешно сброшен."
+            "on_train": "Сейчас началась запись ваших предыдущих сообщений, это необходимо для того, чтобы бот лучше обучился. Во время индексации нельзя пользоваться командами генерации текста, однако сообщения обычно записываются в течении минуты. После успешной записи я сам оповещу об этом."
         },
 
         "errors": {
             "missing_perms": "У вас недостаточно прав для выполнения этой команды.",
             "missing_bot_perms": "У меня недостаточно прав для выполнения этой команды. Пожалуйста, предоставьте все права для роли, которые позволят выполнить данную команду.",
-            "too_late_gen": "Ошибка: не удалось сгенерировать сообщение"
+            "too_late_gen": "Ошибка: не удалось сгенерировать сообщение."
+
 
         },
 
@@ -38,7 +38,7 @@
 
         "etc": {
             "on_join_message": "Thank you for choosing me. I am an open source bot OpenTextAI that can generate messages based on your chat messages. To get started, type in ai.help.",
-            "set_chat_msg": "This chat has been successfully selected as the default chat. Now the recording of your previous messages has begun, this is necessary for the bot to learn better. During indexing, you cannot use the text generation commands, however, messages are usually recorded within a minute. After successful recording, I will notify about it myself."
+            "on_train": "This chat has been successfully selected as the default chat. Now the recording of your previous messages has begun, this is necessary for the bot to learn better. During indexing, you cannot use the text generation commands, however, messages are usually recorded within a minute. After successful recording, I will notify about it myself."
         },
 
         "errors": {
@@ -52,7 +52,7 @@
             "gen_title": "Generated phrase:",
             "burgut_title": "Generated burgut:",
             "dialogue_title": "Generated dialogue:",
-            "reset_chat_msg": "The default chat was successfully reset.",
+            "reon_train": "The default chat was successfully reset.",
             "successful_index": "The chat has been successfully indexed, now you can use the generating commands. Subsequent messages will be indexed automatically. Also, with a probability of 3 percent, the bot will write a randomly generated phrase in the chat"
 
         }

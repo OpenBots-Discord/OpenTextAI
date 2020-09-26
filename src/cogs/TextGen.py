@@ -48,7 +48,7 @@ class TextGen(commands.Cog, name='TextGen'):
     @commands.command()
     async def train(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
-        await ctx.send('ок ща')
+        await ctx.send(embed=Utils.done_embed(locales[lang]['etc']['on_train']))
         f = open(
             filepath + '/../samples/{0}.txt'.format(ctx.message.guild.id), 'w')
 

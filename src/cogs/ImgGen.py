@@ -48,10 +48,10 @@ class ImgGen(commands.Cog, name='ImgGen'):
         self.name = 'ImgGen'
 
     @commands.command(aliases=['fresko'])
-    async def f(self, ctx, *, msg: str):
+    async def f(self, ctx, *, msg: str = None):
         result = get_generated_line(msg=ctx.message, maxsym=30)
 
-        if msg != '':
+        if msg != None:
             if len(msg) > 32:
                 await ctx.send('хули так много блять')
                 return
