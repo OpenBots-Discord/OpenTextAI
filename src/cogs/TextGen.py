@@ -43,24 +43,6 @@ class TextGen(commands.Cog, name='TextGen'):
         self.bot = bot
         self.name = 'TextGen'
 
-    # @commands.cooldown(1, 60, commands.BucketType.channel)
-    @commands.has_permissions(administrator=True)
-    @commands.command()
-    async def train(self, ctx):
-        lang = Utils.get_lang(None, ctx.message)
-        await ctx.send(embed=Utils.done_embed(locales[lang]['etc']['on_train']))
-        f = open(
-            filepath + '/../samples/{0}.txt'.format(ctx.message.guild.id), 'w')
-
-        for channel in ctx.guild.text_channels:
-            messages = await channel.history(limit=15000).flatten()
-            for message in messages:
-                if message.author.bot:
-                    pass
-                else:
-                    f.write(message.content.lower().strip() + '\\')
-        await ctx.send(embed=Utils.done_embed(locales[lang]['gen']['successful_index']))
-
     # @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['bugurt'])
     async def b(self, ctx):
@@ -135,73 +117,50 @@ class TextGen(commands.Cog, name='TextGen'):
         if msg.content.startswith('ai.') or msg.content.startswith('aic.'):
             pass
         else:
-            try:
-                msg_chance = randint(1, 30)
-                if msg_chance == 30:
-                    result = get_generated_line(msg)
-                    chance = randint(1, 20)
-                    if chance >= 1 and chance <= 6:
-                        result = result.capitalize()
-                    elif chance >= 7 and chance <= 12:
-                        result = result.lower()
-                    elif chance >= 13 and chance <= 20:
-                        result = result.upper()
-                    await msg.channel.send(result)
+            # try:
+            msg_chance = randint(1, 30)
+            if msg_chance == 30:
+                result = get_generated_line(msg)
+                chance = randint(1, 20)
+                if chance >= 1 and chance <= 6:
+                    result = result.capitalize()
+                elif chance >= 7 and chance <= 12:
+                    result = result.lower()
+                elif chance >= 13 and chance <= 20:
+                    result = result.upper()
+                await msg.channel.send(result)
 
-                elif '<@!{0}>'.format(self.bot.user.id) in msg.content:
-                    result = get_generated_line(msg)
-                    chance = randint(1, 20)
-                    if chance >= 1 and chance <= 5:
-                        result = result.capitalize()
-                    elif chance >= 6 and chance <= 12:
-                        result = result.lower()
-                    elif chance >= 13 and chance <= 20:
-                        result = result.upper()
-                    await msg.channel.send(result)
+            elif '<@!{0}>'.format(self.bot.user.id) in msg.content:
+                result = get_generated_line(msg)
+                chance = randint(1, 20)
+                if chance >= 1 and chance <= 5:
+                    result = result.capitalize()
+                elif chance >= 6 and chance <= 12:
+                    result = result.lower()
+                elif chance >= 13 and chance <= 20:
+                    result = result.upper()
+                await msg.channel.send(result)
 
-                else:
-                    msg_chance = randint(1, 10)
-                    if msg_chance == 1:
-                        for kw in config['keywords']:
-                            if kw in msg.content:
-                                result = get_generated_line(msg)
-                                chance = randint(1, 20)
-                                if chance >= 1 and chance <= 5:
-                                    result = result.capitalize()
-                                elif chance >= 6 and chance <= 12:
-                                    result = result.lower()
-                                elif chance >= 13 and chance <= 20:
-                                    result = result.upper()
-                                await msg.channel.send(result)
-                                break
+            else:
+                msg_chance = randint(1, 10)
+                if msg_chance == 1:
+                    for kw in config['keywords']:
+                        if kw in msg.content:
+                            result = get_generated_line(msg)
+                            chance = randint(1, 20)
+                            if chance >= 1 and chance <= 5:
+                                result = result.capitalize()
+                            elif chance >= 6 and chance <= 12:
+                                result = result.lower()
+                            elif chance >= 13 and chance <= 20:
+                                result = result.upper()
+                            await msg.channel.send(result)
+                            break
 
-                if msg.author.bot:
-                    pass
-                else:
-                    f = open(
-                        filepath + '/../samples/{0}.txt'.format(Utils.get_chat(msg)), 'a')
-                    if '\n' in msg.content:
-                        pass
-                    elif msg.content == '':
-                        pass
-                    else:
-                        f.write(msg.content.lower().strip() + '\n')
-                await self.bot.process_commands(msg)
-            except:
-                pass
+            await self.bot.process_commands(msg)
 
-    @commands.Cog.listener()
-    async def on_guild_join(self, guild):
-        f = open(
-            filepath + '/../samples/{0}.txt'.format(guild.id), 'w')
-
-        for channel in guild.text_channels:
-            messages = await channel.history(limit=15000).flatten()
-            for message in messages:
-                if message.author.bot:
-                    pass
-                else:
-                    f.write(message.content.lower().strip() + '\\')
+        # except:
+        #     pass
 
 
 def setup(bot):

@@ -1,9 +1,7 @@
-import asyncio
 import json
 from os.path import abspath, dirname
 
 import discord
-import mc
 import os
 from discord.ext import commands
 from discord.ext.commands import Bot
