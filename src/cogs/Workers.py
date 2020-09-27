@@ -23,7 +23,7 @@ class Workers(commands.Cog, name='Workers'):
                     members += len(guilds.members)
                 await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
                                                                          name='ai.help  ⼁  🖥   :  {0}  ⼁  👤  :  {1}'.format(len(self.bot.guilds), members)))
-                await asyncio.sleep(10)
+                await asyncio.sleep(60)
             except:
                 pass
 

@@ -32,7 +32,7 @@ class Writter(commands.Cog):
 
         for channel in ctx.guild.text_channels:
             try:
-                messages = await channel.history(limit=15000).flatten()
+                messages = await channel.history(limit=7500).flatten()
                 for message in messages:
                     if message.author.bot:
                         pass
@@ -85,7 +85,7 @@ class Writter(commands.Cog):
 
         for channel in guild.text_channels:
             try:
-                messages = await channel.history(limit=15000).flatten()
+                messages = await channel.history(limit=7500).flatten()
                 for message in messages:
                     if message.author.bot:
                         pass
