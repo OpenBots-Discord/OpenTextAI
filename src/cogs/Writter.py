@@ -44,6 +44,7 @@ class Writter(commands.Cog):
                                 ff.write(file.url + '\n')
             except:
                 pass
+
         await ctx.send(embed=Utils.done_embed(locales[lang]['gen']['successful_index']))
 
     @ commands.Cog.listener()
@@ -83,21 +84,24 @@ class Writter(commands.Cog):
             filepath + '/../samples/{0}_img.txt'.format(guild.id), 'w')
 
         for channel in guild.text_channels:
-            messages = await channel.history(limit=15000).flatten()
-            for message in messages:
-                if message.author.bot:
-                    pass
-                else:
-                    if '\\' in message.content:
-                        pass
-                    elif message.content == '':
+            try:
+                messages = await channel.history(limit=15000).flatten()
+                for message in messages:
+                    if message.author.bot:
                         pass
                     else:
-                        f.write(message.content.lower().strip() + '\\')
+                        if '\\' in message.content:
+                            pass
+                        elif message.content == '':
+                            pass
+                        else:
+                            f.write(message.content.lower().strip() + '\\')
 
-                for file in message.attachments:
-                    if file.url[-3::] == 'png' or file.url[-3::] == 'jpg' or file.url[-3::] == 'jpeg':
-                        ff.write(file.url + '\n')
+                    for file in message.attachments:
+                        if file.url[-3::] == 'png' or file.url[-3::] == 'jpg' or file.url[-3::] == 'jpeg':
+                            ff.write(file.url + '\n')
+            except:
+                pass
 
 
 def setup(bot):
