@@ -25,21 +25,37 @@ with open(dirname(abspath(__file__)) + '/../data/config.json') as f:
     config = json.load(f)
 
 
-def get_generated_line(msg, minword=2, maxword=15, minsym=5, maxsym=150):
+def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, add_stars=True):
     samples_txt = mc.util.load_txt_samples(
         filepath + '/../samples/{0}.txt'.format(msg.guild.id), separator="\\")
     generator = mc.StringGenerator(samples=samples_txt)
 
-    result = generator.generate_string(
-        attempts=20,
-        validator=mc.util.combine_validators(
-            mc.validators.words_count(minword, maxword),
-            mc.validators.symbols_count(minsym, maxsym),
-        ),
-    )
+    result = ''
+    while (result == ''):
+        result = generator.generate_string(
+            attempts=20,
+            validator=mc.util.combine_validators(
+                mc.validators.words_count(minword, maxword),
+                mc.validators.symbols_count(minsym, maxsym),
+            ),
+        )
 
     clean_result = re.sub(
         r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", result)
+
+    mentions = re.findall('\<[@].*?\>', clean_result)
+    for mention in mentions:
+        clean_mention = re.sub('[<@!>]', '', mention)
+        user = bot.get_user(int(clean_mention))
+        clean_result = clean_result.replace(
+            mention, f'@{user.name}#{user.discriminator}')
+
+    roles = re.findall('\<[&].*?\>', clean_result)
+    for mention in roles:
+        clean_mention = re.sub('[<@!&>]', '', mention)
+        role = bot.get_role(int(clean_mention))
+        clean_result = clean_result.replace(
+            mention, f'@{role.name}')
 
     return clean_result
 
@@ -51,7 +67,7 @@ class ImgGen(commands.Cog, name='ImgGen'):
 
     @commands.command(aliases=['fresko'])
     async def f(self, ctx):
-        result = get_generated_line(msg=ctx.message, maxsym=30)
+        result = get_generated_line(bot=self.bot, msg=ctx.message, maxsym=30)
 
         chance = randint(1, 20)
         if chance >= 1 and chance <= 13:
@@ -86,8 +102,8 @@ class ImgGen(commands.Cog, name='ImgGen'):
 
     @commands.command()
     async def dem(self, ctx, member: discord.Member = None):
-        msg = get_generated_line(ctx.message, maxsym=20)
-        msg2 = get_generated_line(ctx.message, maxsym=30)
+        msg = get_generated_line(self.bot, ctx.message, maxsym=20)
+        msg2 = get_generated_line(self.bot, ctx.message, maxsym=30)
 
         base = Image.open(filepath + "/../data/dem.png").convert("RGBA")
 

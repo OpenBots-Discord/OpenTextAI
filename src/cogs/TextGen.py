@@ -19,21 +19,52 @@ with open(dirname(abspath(__file__)) + '/../data/config.json') as f:
     config = json.load(f)
 
 
-def get_generated_line(msg, minword=2, maxword=15, minsym=5, maxsym=150):
+def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, add_stars=True):
     samples_txt = mc.util.load_txt_samples(
         filepath + '/../samples/{0}.txt'.format(msg.guild.id), separator="\\")
     generator = mc.StringGenerator(samples=samples_txt)
 
-    result = generator.generate_string(
-        attempts=20,
-        validator=mc.util.combine_validators(
-            mc.validators.words_count(minword, maxword),
-            mc.validators.symbols_count(minsym, maxsym),
-        ),
-    )
+    result = ''
+    while (result == ''):
+        result = generator.generate_string(
+            attempts=20,
+            validator=mc.util.combine_validators(
+                mc.validators.words_count(minword, maxword),
+                mc.validators.symbols_count(minsym, maxsym),
+            ),
+        )
 
     clean_result = re.sub(
         r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", result)
+
+    if add_stars:
+        mentions = re.findall('\<[@].*?\>', clean_result)
+        for mention in mentions:
+            clean_mention = re.sub('[<@!>]', '', mention)
+            user = bot.get_user(int(clean_mention))
+            clean_result = clean_result.replace(
+                mention, f'**\@{user.name}#{user.discriminator}**')
+
+        roles = re.findall('\<[&].*?\>', clean_result)
+        for mention in roles:
+            clean_mention = re.sub('[<@!&>]', '', mention)
+            role = bot.get_role(int(clean_mention))
+            clean_result = clean_result.replace(
+                mention, f'**\@{role.name}**')
+    else:
+        mentions = re.findall('\<[@].*?\>', clean_result)
+        for mention in mentions:
+            clean_mention = re.sub('[<@!>]', '', mention)
+            user = bot.get_user(int(clean_mention))
+            clean_result = clean_result.replace(
+                mention, f'@{user.name}#{user.discriminator}')
+
+        roles = re.findall('\<[&].*?\>', clean_result)
+        for mention in roles:
+            clean_mention = re.sub('[<@!&>]', '', mention)
+            role = bot.get_role(int(clean_mention))
+            clean_result = clean_result.replace(
+                mention, f'@{role.name}')
 
     return clean_result
 
@@ -54,7 +85,7 @@ class TextGen(commands.Cog, name='TextGen'):
             result = ''
 
             for _ in range(lines - 1):
-                result += get_generated_line(ctx.message,
+                result += get_generated_line(self.bot, ctx.message,
                                              1, 10).upper() + "\n@\n"
             result += get_generated_line(
                 ctx.message, 1, 10).upper()
@@ -73,34 +104,33 @@ class TextGen(commands.Cog, name='TextGen'):
     async def d(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
 
-        try:
-            lines = randint(2, 20)
+        # try:
+        lines = randint(2, 20)
 
-            result = '```'
-            for _ in range(lines):
-                result += '> ' + \
-                    get_generated_line(
-                        ctx.message, 1, 10).capitalize() + "\n"
-            result += '```'
+        result = '```'
+        for _ in range(lines):
+            result += '> ' + get_generated_line(self.bot,
+                                                ctx.message, 1, 10, 5, 150, False).capitalize() + "\n"
+        result += '```'
 
-            embed = discord.Embed(
-                color=0xfcf36a, title=locales[lang]['gen']['dialogue_title'], description=result)
-            await ctx.send(embed=embed)
+        embed = discord.Embed(
+            color=0xfcf36a, title=locales[lang]['gen']['dialogue_title'], description=result)
+        await ctx.send(embed=embed)
 
-        except Exception:
-            await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
+        # except Exception:
+        #     await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
     # @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['generate', 'g'])
     async def gen(self, ctx, mode=''):
         if mode == "1":
-            result = get_generated_line(ctx.message, 1, 4)
+            result = get_generated_line(self.bot, ctx.message, 1, 4)
         elif mode == "2":
-            result = get_generated_line(ctx.message, 4, 8)
+            result = get_generated_line(self.bot, ctx.message, 4, 8)
         elif mode == "3":
-            result = get_generated_line(ctx.message, 8, 15)
+            result = get_generated_line(self.bot, ctx.message, 8, 15)
         else:
-            result = get_generated_line(ctx.message, 1, 10, 5, 200)
+            result = get_generated_line(self.bot, ctx.message, 1, 10, 5, 200)
 
         chance = randint(1, 20)
         if chance >= 1 and chance <= 10:
@@ -120,7 +150,7 @@ class TextGen(commands.Cog, name='TextGen'):
             # try:
             msg_chance = randint(1, 30)
             if msg_chance == 30:
-                result = get_generated_line(msg)
+                result = get_generated_line(self.bot, msg)
                 chance = randint(1, 20)
                 if chance >= 1 and chance <= 6:
                     result = result.capitalize()
@@ -131,7 +161,7 @@ class TextGen(commands.Cog, name='TextGen'):
                 await msg.channel.send(result)
 
             elif '<@!{0}>'.format(self.bot.user.id) in msg.content:
-                result = get_generated_line(msg)
+                result = get_generated_line(self.bot, msg)
                 chance = randint(1, 20)
                 if chance >= 1 and chance <= 5:
                     result = result.capitalize()
@@ -146,7 +176,7 @@ class TextGen(commands.Cog, name='TextGen'):
                 if msg_chance == 1:
                     for kw in config['keywords']:
                         if kw in msg.content:
-                            result = get_generated_line(msg)
+                            result = get_generated_line(self.bot, msg)
                             chance = randint(1, 20)
                             if chance >= 1 and chance <= 5:
                                 result = result.capitalize()
@@ -158,9 +188,6 @@ class TextGen(commands.Cog, name='TextGen'):
                             break
 
             await self.bot.process_commands(msg)
-
-        # except:
-        #     pass
 
 
 def setup(bot):
