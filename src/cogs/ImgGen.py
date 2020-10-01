@@ -43,19 +43,22 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
     clean_result = re.sub(
         r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", result)
 
-    mentions = re.findall('\<[@].*?\>', clean_result)
+    mentions = re.findall('\<@!.*?\>', clean_result)
     for mention in mentions:
-        clean_mention = re.sub('[<@!>]', '', mention)
+        clean_mention = re.sub('[<@\!>]', '', mention)
         user = bot.get_user(int(clean_mention))
         clean_result = clean_result.replace(
             mention, f'@{user.name}#{user.discriminator}')
 
-    roles = re.findall('\<[&].*?\>', clean_result)
-    for mention in roles:
-        clean_mention = re.sub('[<@!&>]', '', mention)
-        role = bot.get_role(int(clean_mention))
+    roles = re.findall('\<@&.*?\>', clean_result)
+    for role_mention in roles:
+        clean_role_mention = re.sub('[<@&>]', '', role_mention)
+        role = discord.utils.get(
+            msg.guild.roles, id=int(clean_role_mention))
         clean_result = clean_result.replace(
-            mention, f'@{role.name}')
+            role_mention, f'@{role.name}')
+
+    clean_result = re.sub('\<.*?\:.*?\:.*?\>', '', clean_result)
 
     return clean_result
 
@@ -97,7 +100,7 @@ class ImgGen(commands.Cog, name='ImgGen'):
         file = discord.File(filepath + f"/../data/f_temp_{id}.png",
                             filename="fresko.png")
 
-        await ctx.send(file=file)
+        await message.edit(file=file)
         os.remove(filepath + f"/../data/f_temp_{id}.png")
 
     @commands.command()
@@ -149,13 +152,13 @@ class ImgGen(commands.Cog, name='ImgGen'):
         file = discord.File(filepath + f"/../data/dem_temp_{id}.png",
                             filename="demotivator.png")
 
-        await ctx.send(file=file)
+        await message.edit(file=file)
         os.remove(filepath + f"/../data/dem_temp_{id}.png")
 
     @dem.error
     async def dem_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.send('дурачок...')
+            await ctx.send('Ошибка: неверный аргумент.')
 
 
 def setup(bot):

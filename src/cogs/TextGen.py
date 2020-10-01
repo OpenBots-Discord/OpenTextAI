@@ -38,33 +38,53 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
         r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", result)
 
     if add_stars:
-        mentions = re.findall('\<[@].*?\>', clean_result)
-        for mention in mentions:
-            clean_mention = re.sub('[<@!>]', '', mention)
-            user = bot.get_user(int(clean_mention))
-            clean_result = clean_result.replace(
-                mention, f'**\@{user.name}#{user.discriminator}**')
+        try:
+            mentions = re.findall('\<@!.*?\>', clean_result)
+            print(mentions)
+            for mention in mentions:
+                clean_mention = re.sub('[<@\!>]', '', mention)
+                print(clean_mention)
+                user = bot.get_user(int(clean_mention))
+                clean_result = clean_result.replace(
+                    mention, f'**\@{user.name}#{user.discriminator}**')
+        except:
+            pass
 
-        roles = re.findall('\<[&].*?\>', clean_result)
-        for mention in roles:
-            clean_mention = re.sub('[<@!&>]', '', mention)
-            role = bot.get_role(int(clean_mention))
-            clean_result = clean_result.replace(
-                mention, f'**\@{role.name}**')
+        try:
+            roles = re.findall('\<@&.*?\>', clean_result)
+            print(roles)
+            for role_mention in roles:
+                clean_role_mention = re.sub('[<@&>]', '', role_mention)
+                print(clean_role_mention)
+                role = discord.utils.get(
+                    msg.guild.roles, id=int(clean_role_mention))
+                clean_result = clean_result.replace(
+                    role_mention, f'**\@{role.name}**')
+        except:
+            pass
     else:
-        mentions = re.findall('\<[@].*?\>', clean_result)
-        for mention in mentions:
-            clean_mention = re.sub('[<@!>]', '', mention)
-            user = bot.get_user(int(clean_mention))
-            clean_result = clean_result.replace(
-                mention, f'@{user.name}#{user.discriminator}')
+        try:
+            mentions = re.findall('\<@!.*?\>', clean_result)
+            for mention in mentions:
+                clean_mention = re.sub('[<@\!>]', '', mention)
+                user = bot.get_user(int(clean_mention))
+                clean_result = clean_result.replace(
+                    mention, f'@{user.name}#{user.discriminator}')
+        except:
+            pass
 
-        roles = re.findall('\<[&].*?\>', clean_result)
-        for mention in roles:
-            clean_mention = re.sub('[<@!&>]', '', mention)
-            role = bot.get_role(int(clean_mention))
-            clean_result = clean_result.replace(
-                mention, f'@{role.name}')
+        try:
+            roles = re.findall('\<@&.*?\>', clean_result)
+            for role_mention in roles:
+                clean_role_mention = re.sub('[<@&>]', '', role_mention)
+                role = discord.utils.get(
+                    msg.guild.roles, id=int(clean_role_mention))
+                clean_result = clean_result.replace(
+                    role_mention, f'@{role.name}')
+        except:
+            pass
+
+    clean_result = re.sub('\<.*?\:.*?\:.*?\>', '', clean_result)
 
     return clean_result
 
@@ -79,25 +99,27 @@ class TextGen(commands.Cog, name='TextGen'):
     async def b(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
 
-        try:
-            lines = randint(2, 10)
-            face = randint(1, 23)
-            result = ''
+        # try:
+        lines = randint(2, 10)
+        face = randint(1, 23)
+        result = ''
 
-            for _ in range(lines - 1):
-                result += get_generated_line(self.bot, ctx.message,
-                                             1, 10).upper() + "\n@\n"
-            result += get_generated_line(
-                ctx.message, 1, 10).upper()
+        for _ in range(lines - 1):
+            result += get_generated_line(self.bot, ctx.message,
+                                         1, 10).upper() + "\n@\n"
 
-            file = discord.File(
-                filepath + '/../data/burgut_faces/{0}.jpg'.format(face), filename='{0}.jpg'.format(face))
-            embed = discord.Embed(
-                color=0xff546b, title=locales[lang]['gen']['burgut_title'], description=result)
-            embed.set_image(url='attachment://{0}.jpg'.format(face))
-            await ctx.send(file=file, embed=embed)
-        except Exception:
-            await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
+        result += get_generated_line(self.bot,
+                                     ctx.message, 1, 10).upper()
+
+        file = discord.File(
+            filepath + '/../data/burgut_faces/{0}.jpg'.format(face), filename='{0}.jpg'.format(face))
+        embed = discord.Embed(
+            color=0xff546b, title=locales[lang]['gen']['burgut_title'], description=result)
+
+        embed.set_image(url='attachment://{0}.jpg'.format(face))
+        await ctx.send(file=file, embed=embed)
+        # except Exception:
+        #     await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
     # @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['dialog', 'dialogue'])
@@ -188,6 +210,37 @@ class TextGen(commands.Cog, name='TextGen'):
                             break
 
             await self.bot.process_commands(msg)
+
+    @commands.command()
+    async def test(self, ctx, *, msg: str):
+        clean_result = re.sub(
+            r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", msg)
+        try:
+            mentions = re.findall('\<@!.*?\>', clean_result)
+            print(mentions)
+            for mention in mentions:
+                clean_mention = re.sub('[<@\!>]', '', mention)
+                print(clean_mention)
+                user = bot.get_user(int(clean_mention))
+                clean_result = clean_result.replace(
+                    mention, f'**\@{user.name}#{user.discriminator}**')
+        except:
+            pass
+
+        try:
+            roles = re.findall('\<@&.*?\>', clean_result)
+            print(roles)
+            for role_mention in roles:
+                clean_role_mention = re.sub('[<@&>]', '', role_mention)
+                print(clean_role_mention)
+                role = discord.utils.get(
+                    msg.guild.roles, id=int(clean_role_mention))
+                clean_result = clean_result.replace(
+                    role_mention, f'**\@{role.name}**')
+        except:
+            pass
+
+        await ctx.send(clean_result)
 
 
 def setup(bot):

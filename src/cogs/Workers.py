@@ -1,7 +1,6 @@
 import asyncio
-import glob
+import requests
 import json
-import datetime
 from os.path import dirname
 from os.path import abspath
 
@@ -14,6 +13,7 @@ class Workers(commands.Cog, name='Workers'):
         self.bot = bot
         self.name = 'Workers'
         bot.loop.create_task(Workers.status_updater(self, bot))
+        # bot.loop.create_task(Workers.sdc_updater(self, bot))
 
     async def status_updater(self, bot):
         while True:
@@ -26,6 +26,17 @@ class Workers(commands.Cog, name='Workers'):
                 await asyncio.sleep(60)
             except:
                 pass
+
+    async def sdc_updater(self, bot):
+        with open(dirname(abspath(__file__)) + '/data/config.json') as f:
+            config = json.load(f)
+        while True:
+            response = requests.post('https://api.server-discord.com/v2/bots/748543469001244813/stats',
+                                     headers={
+                                         "Authorization": config['sdc_token']},
+                                     data={"servers": len(bot.guilds), "shards": 0})
+            print(response.content)
+            await asyncio.sleep(60)
 
 
 def setup(bot):
