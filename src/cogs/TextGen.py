@@ -40,10 +40,8 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
     if add_stars:
         try:
             mentions = re.findall('\<@!.*?\>', clean_result)
-            print(mentions)
             for mention in mentions:
                 clean_mention = re.sub('[<@\!>]', '', mention)
-                print(clean_mention)
                 user = bot.get_user(int(clean_mention))
                 clean_result = clean_result.replace(
                     mention, f'**\@{user.name}#{user.discriminator}**')
@@ -52,10 +50,8 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
 
         try:
             roles = re.findall('\<@&.*?\>', clean_result)
-            print(roles)
             for role_mention in roles:
                 clean_role_mention = re.sub('[<@&>]', '', role_mention)
-                print(clean_role_mention)
                 role = discord.utils.get(
                     msg.guild.roles, id=int(clean_role_mention))
                 clean_result = clean_result.replace(
@@ -217,10 +213,8 @@ class TextGen(commands.Cog, name='TextGen'):
             r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", msg)
         try:
             mentions = re.findall('\<@!.*?\>', clean_result)
-            print(mentions)
             for mention in mentions:
                 clean_mention = re.sub('[<@\!>]', '', mention)
-                print(clean_mention)
                 user = bot.get_user(int(clean_mention))
                 clean_result = clean_result.replace(
                     mention, f'**\@{user.name}#{user.discriminator}**')
@@ -229,10 +223,8 @@ class TextGen(commands.Cog, name='TextGen'):
 
         try:
             roles = re.findall('\<@&.*?\>', clean_result)
-            print(roles)
             for role_mention in roles:
                 clean_role_mention = re.sub('[<@&>]', '', role_mention)
-                print(clean_role_mention)
                 role = discord.utils.get(
                     msg.guild.roles, id=int(clean_role_mention))
                 clean_result = clean_result.replace(

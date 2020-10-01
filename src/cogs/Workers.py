@@ -28,7 +28,7 @@ class Workers(commands.Cog, name='Workers'):
                 pass
 
     async def sdc_updater(self, bot):
-        with open(dirname(abspath(__file__)) + '/data/config.json') as f:
+        with open(dirname(abspath(__file__)) + '/../data/config.json') as f:
             config = json.load(f)
         while True:
             response = requests.post('https://api.server-discord.com/v2/bots/748543469001244813/stats',
