@@ -35,7 +35,6 @@ class Workers(commands.Cog, name='Workers'):
                                      headers={
                                          "Authorization": config['sdc_token']},
                                      data={"servers": len(bot.guilds), "shards": 0})
-            print(response.content)
             await asyncio.sleep(60)
 
 
