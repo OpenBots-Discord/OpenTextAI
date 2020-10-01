@@ -100,7 +100,7 @@ class ImgGen(commands.Cog, name='ImgGen'):
         file = discord.File(filepath + f"/../data/f_temp_{id}.png",
                             filename="fresko.png")
 
-        await ctx.edit(file=file)
+        await ctx.send(file=file)
         os.remove(filepath + f"/../data/f_temp_{id}.png")
 
     @commands.command()
@@ -152,7 +152,7 @@ class ImgGen(commands.Cog, name='ImgGen'):
         file = discord.File(filepath + f"/../data/dem_temp_{id}.png",
                             filename="demotivator.png")
 
-        await ctx.edit(file=file)
+        await ctx.send(file=file)
         os.remove(filepath + f"/../data/dem_temp_{id}.png")
 
     @dem.error
