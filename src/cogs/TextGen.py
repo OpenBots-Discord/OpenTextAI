@@ -90,7 +90,7 @@ class TextGen(commands.Cog, name='TextGen'):
         self.bot = bot
         self.name = 'TextGen'
 
-    # @ commands.cooldown(1, 5, commands.BucketType.user)
+    @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['bugurt'])
     async def b(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
@@ -117,7 +117,7 @@ class TextGen(commands.Cog, name='TextGen'):
         # except Exception:
         #     await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
-    # @ commands.cooldown(1, 5, commands.BucketType.user)
+    @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['dialog', 'dialogue'])
     async def d(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
@@ -138,7 +138,7 @@ class TextGen(commands.Cog, name='TextGen'):
         # except Exception:
         #     await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
-    # @ commands.cooldown(1, 5, commands.BucketType.user)
+    @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['generate', 'g'])
     async def gen(self, ctx, mode=''):
         if mode == "1":
@@ -215,7 +215,7 @@ class TextGen(commands.Cog, name='TextGen'):
             mentions = re.findall('\<@!.*?\>', clean_result)
             for mention in mentions:
                 clean_mention = re.sub('[<@\!>]', '', mention)
-                user = bot.get_user(int(clean_mention))
+                user = self.bot.get_user(int(clean_mention))
                 clean_result = clean_result.replace(
                     mention, f'**\@{user.name}#{user.discriminator}**')
         except:

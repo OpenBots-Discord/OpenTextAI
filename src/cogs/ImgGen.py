@@ -68,6 +68,7 @@ class ImgGen(commands.Cog, name='ImgGen'):
         self.bot = bot
         self.name = 'ImgGen'
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(aliases=['fresko'])
     async def f(self, ctx):
         result = get_generated_line(bot=self.bot, msg=ctx.message, maxsym=30)
@@ -103,6 +104,7 @@ class ImgGen(commands.Cog, name='ImgGen'):
         await ctx.send(file=file)
         os.remove(filepath + f"/../data/f_temp_{id}.png")
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command()
     async def dem(self, ctx, member: discord.Member = None):
         msg = get_generated_line(self.bot, ctx.message, maxsym=20)
