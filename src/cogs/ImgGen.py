@@ -103,6 +103,9 @@ class ImgGen(commands.Cog, name='ImgGen'):
 
         await ctx.send(file=file)
         os.remove(filepath + f"/../data/f_temp_{id}.png")
+        out.close()
+        txt.close()
+        base.close()
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command()
@@ -156,6 +159,10 @@ class ImgGen(commands.Cog, name='ImgGen'):
 
         await ctx.send(file=file)
         os.remove(filepath + f"/../data/dem_temp_{id}.png")
+        out.close()
+        txt.close()
+        image.close()
+        base.close()
 
     @dem.error
     async def dem_error(self, ctx, error):
