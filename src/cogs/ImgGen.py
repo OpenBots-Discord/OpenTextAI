@@ -1,3 +1,6 @@
+import asyncio
+from functools import wraps, partial
+
 from PIL import Image, ImageDraw, ImageFont
 
 import discord
@@ -48,7 +51,7 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
         clean_mention = re.sub('[<@\!>]', '', mention)
         user = bot.get_user(int(clean_mention))
         clean_result = clean_result.replace(
-            mention, f'@{user.name}#{user.discriminator}')
+            mention, f'@{user.name}')
 
     roles = re.findall('\<@&.*?\>', clean_result)
     for role_mention in roles:
@@ -71,7 +74,8 @@ class ImgGen(commands.Cog, name='ImgGen'):
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(aliases=['fresko'])
     async def f(self, ctx):
-        result = get_generated_line(bot=self.bot, msg=ctx.message, maxsym=30)
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(None, partial(get_generated_line, bot=self.bot, msg=ctx.message, maxsym=30))
 
         chance = randint(1, 20)
         if chance >= 1 and chance <= 13:
@@ -110,8 +114,9 @@ class ImgGen(commands.Cog, name='ImgGen'):
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command()
     async def dem(self, ctx, member: discord.Member = None):
-        msg = get_generated_line(self.bot, ctx.message, maxsym=20)
-        msg2 = get_generated_line(self.bot, ctx.message, maxsym=30)
+        loop = asyncio.get_running_loop()
+        msg = await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message, maxsym=20))
+        msg2 = await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message, maxsym=30))
 
         base = Image.open(filepath + "/../data/dem.png").convert("RGBA")
 

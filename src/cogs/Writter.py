@@ -1,9 +1,8 @@
-import discord
 import json
+import os
 from os.path import abspath, dirname
 from cogs.Utils import Utils
 
-import discord
 from discord.ext import commands
 
 filepath = dirname(abspath(__file__))
@@ -19,7 +18,7 @@ class Writter(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # @commands.cooldown(1, 60, commands.BucketType.channel)
+    @commands.cooldown(1, 60, commands.BucketType.channel)
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def train(self, ctx):
@@ -32,7 +31,7 @@ class Writter(commands.Cog):
 
         for channel in ctx.guild.text_channels:
             try:
-                messages = await channel.history(limit=7500).flatten()
+                messages = await channel.history(limit=500).flatten()
                 for message in messages:
                     if message.author.bot:
                         pass
@@ -46,6 +45,15 @@ class Writter(commands.Cog):
                 pass
 
         await ctx.send(embed=Utils.done_embed(locales[lang]['gen']['successful_index']))
+
+    @commands.has_permissions(administrator=True)
+    @commands.command()
+    async def wipe(self, ctx):
+        lang = Utils.get_lang(None, ctx.message)
+
+        os.remove(filepath + f"/../samples/{ctx.guild.id}.txt")
+        os.remove(filepath + f"/../samples/{ctx.guild.id}_img.txt")
+        await ctx.send(embed=Utils.done_embed(locales[lang]['etc']['on_wipe']))
 
     @ commands.Cog.listener()
     async def on_message(self, msg):
@@ -85,7 +93,7 @@ class Writter(commands.Cog):
 
         for channel in guild.text_channels:
             try:
-                messages = await channel.history(limit=7500).flatten()
+                messages = await channel.history(limit=500).flatten()
                 for message in messages:
                     if message.author.bot:
                         pass
@@ -102,6 +110,11 @@ class Writter(commands.Cog):
                             ff.write(file.url + '\n')
             except:
                 pass
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        os.remove(filepath + f"/../data/{guild.id}.png")
+        os.remove(filepath + f"/../data/{guild.id}_img.png")
 
 
 def setup(bot):

@@ -1,3 +1,6 @@
+import asyncio
+from functools import partial
+
 import discord
 import json
 import mc
@@ -25,7 +28,7 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
     generator = mc.StringGenerator(samples=samples_txt)
 
     result = ''
-    while (result == ''):
+    while (result == '' or result == None):
         result = generator.generate_string(
             attempts=20,
             validator=mc.util.combine_validators(
@@ -44,7 +47,7 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
                 clean_mention = re.sub('[<@\!>]', '', mention)
                 user = bot.get_user(int(clean_mention))
                 clean_result = clean_result.replace(
-                    mention, f'**\@{user.name}#{user.discriminator}**')
+                    mention, f'**{user.display_name}**')
         except:
             pass
 
@@ -55,7 +58,7 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
                 role = discord.utils.get(
                     msg.guild.roles, id=int(clean_role_mention))
                 clean_result = clean_result.replace(
-                    role_mention, f'**\@{role.name}**')
+                    role_mention, f'**{role.name}**')
         except:
             pass
     else:
@@ -65,7 +68,7 @@ def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, ad
                 clean_mention = re.sub('[<@\!>]', '', mention)
                 user = bot.get_user(int(clean_mention))
                 clean_result = clean_result.replace(
-                    mention, f'@{user.name}#{user.discriminator}')
+                    mention, f'@{user.display_name}')
         except:
             pass
 
@@ -93,19 +96,19 @@ class TextGen(commands.Cog, name='TextGen'):
     @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['bugurt'])
     async def b(self, ctx):
+        loop = asyncio.get_running_loop()
         lang = Utils.get_lang(None, ctx.message)
 
-        # try:
         lines = randint(2, 10)
         face = randint(1, 23)
         result = ''
 
         for _ in range(lines - 1):
-            result += get_generated_line(self.bot, ctx.message,
-                                         1, 10).upper() + "\n@\n"
+            result += (await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message,
+                                                                1, 10))).upper() + "\n@\n"
 
-        result += get_generated_line(self.bot,
-                                     ctx.message, 1, 10).upper()
+            result += (await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message,
+                                                                1, 10))).upper()
 
         file = discord.File(
             filepath + '/../data/burgut_faces/{0}.jpg'.format(face), filename='{0}.jpg'.format(face))
@@ -114,21 +117,20 @@ class TextGen(commands.Cog, name='TextGen'):
 
         embed.set_image(url='attachment://{0}.jpg'.format(face))
         await ctx.send(file=file, embed=embed)
-        # except Exception:
-        #     await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
     @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['dialog', 'dialogue'])
     async def d(self, ctx):
         lang = Utils.get_lang(None, ctx.message)
+        loop = asyncio.get_running_loop()
 
         # try:
         lines = randint(2, 20)
 
         result = '```'
         for _ in range(lines):
-            result += '> ' + get_generated_line(self.bot,
-                                                ctx.message, 1, 10, 5, 150, False).capitalize() + "\n"
+            result += ('> ' + await loop.run_in_executor(None, partial(get_generated_line, self.bot,
+                                                                       ctx.message, 1, 10, 5, 150, False))).capitalize() + "\n"
         result += '```'
 
         embed = discord.Embed(
@@ -138,17 +140,20 @@ class TextGen(commands.Cog, name='TextGen'):
         # except Exception:
         #     await ctx.send(embed=Utils.error_embed(locales[lang]['errors']['too_late_gen']))
 
-    @ commands.cooldown(1, 5, commands.BucketType.user)
+    # @ commands.cooldown(1, 5, commands.BucketType.user)
     @ commands.command(aliases=['generate', 'g'])
     async def gen(self, ctx, mode=''):
+        loop = asyncio.get_running_loop()
+
         if mode == "1":
-            result = get_generated_line(self.bot, ctx.message, 1, 4)
+            result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message, 1, 4))
         elif mode == "2":
-            result = get_generated_line(self.bot, ctx.message, 4, 8)
+            result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message, 4, 8))
         elif mode == "3":
-            result = get_generated_line(self.bot, ctx.message, 8, 15)
+            result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, ctx.message, 8, 15))
         else:
-            result = get_generated_line(self.bot, ctx.message, 1, 10, 5, 200)
+            result = await loop.run_in_executor(
+                None, partial(get_generated_line, self.bot, ctx.message, 1, 10, 5, 200))
 
         chance = randint(1, 20)
         if chance >= 1 and chance <= 10:
@@ -166,9 +171,10 @@ class TextGen(commands.Cog, name='TextGen'):
             pass
         else:
             # try:
+            loop = asyncio.get_running_loop()
             msg_chance = randint(1, 30)
             if msg_chance == 30:
-                result = get_generated_line(self.bot, msg)
+                result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, msg))
                 chance = randint(1, 20)
                 if chance >= 1 and chance <= 6:
                     result = result.capitalize()
@@ -179,7 +185,7 @@ class TextGen(commands.Cog, name='TextGen'):
                 await msg.channel.send(result)
 
             elif '<@!{0}>'.format(self.bot.user.id) in msg.content:
-                result = get_generated_line(self.bot, msg)
+                result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, msg))
                 chance = randint(1, 20)
                 if chance >= 1 and chance <= 5:
                     result = result.capitalize()
@@ -194,7 +200,7 @@ class TextGen(commands.Cog, name='TextGen'):
                 if msg_chance == 1:
                     for kw in config['keywords']:
                         if kw in msg.content:
-                            result = get_generated_line(self.bot, msg)
+                            result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, msg))
                             chance = randint(1, 20)
                             if chance >= 1 and chance <= 5:
                                 result = result.capitalize()
@@ -207,7 +213,7 @@ class TextGen(commands.Cog, name='TextGen'):
 
             await self.bot.process_commands(msg)
 
-    @commands.command()
+    @ commands.command()
     async def test(self, ctx, *, msg: str):
         clean_result = re.sub(
             r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", msg)
