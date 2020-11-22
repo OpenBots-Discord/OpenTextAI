@@ -61,16 +61,16 @@ class Listeners(commands.Cog, name='Listeners'):
             await asyncio.sleep(5)
             await message.delete()
 
-        else:
-            now = datetime.datetime.now()
-            time = now.strftime('%H:%M:%S')
-            cprint(locales[config['default_locale']]['bot_log']
-                   ['warn'].format(time, str(error)), 'red')
-            # embed = discord.Embed(title=locales[lang]['errors']['on_error_title'],
-            #                       description=locales[lang]['errors']['on_error_text'].format(str(error)), color=0xdd0000)
-            # message = await ctx.send(embed=embed)
-            # await asyncio.sleep(5)
-            # await message.delete()
+        # else:
+        #     now = datetime.datetime.now()
+        #     time = now.strftime('%H:%M:%S')
+        #     cprint(locales[config['default_locale']]['bot_log']
+        #            ['warn'].format(time, str(error)), 'red')
+        #     embed = discord.Embed(title=locales[lang]['errors']['on_error_title'],
+        #                           description=locales[lang]['errors']['on_error_text'].format(str(error)), color=0xdd0000)
+        #     message = await ctx.send(embed=embed)
+        #     await asyncio.sleep(5)
+        #     await message.delete()
 
 
 def setup(bot):

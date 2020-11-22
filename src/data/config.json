@@ -5,5 +5,6 @@
     "default_locale": "ru_RU",
     "keywords": ["текстген", "гена", "текстаи", "текст аи", "текст аи", "opentext", "textai", "textgen", "open text",
         "text ai", "text gen", "opentextai", "опентекстаи", "open text ai", "опен текст аи"
-    ]
+    ],
+    "bad_start_words": ["ai.", "aic.", "m.", "mc.", "!", ".", "f.", "g.", "k.", "f.", "a!"]
 }

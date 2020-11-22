@@ -1,3 +1,4 @@
+# я пукну л
 import asyncio
 from functools import partial
 
@@ -22,70 +23,27 @@ with open(dirname(abspath(__file__)) + '/../data/config.json') as f:
     config = json.load(f)
 
 
-def get_generated_line(bot, msg, minword=2, maxword=15, minsym=5, maxsym=150, add_stars=True):
+def get_generated_line(bot, msg, minword=2, maxword=10, minsym=5, maxsym=150):
     samples_txt = mc.util.load_txt_samples(
         filepath + '/../samples/{0}.txt'.format(msg.guild.id), separator="\\")
     generator = mc.StringGenerator(samples=samples_txt)
 
-    result = ''
-    while (result == '' or result == None):
-        result = generator.generate_string(
-            attempts=20,
-            validator=mc.util.combine_validators(
-                mc.validators.words_count(minword, maxword),
-                mc.validators.symbols_count(minsym, maxsym),
-            ),
-        )
+    result = generator.generate_string(
+        attempts=20,
+        validator=mc.util.combine_validators(
+            mc.validators.words_count(minword, maxword),
+            mc.validators.symbols_count(minsym, maxsym),
+        ),
+    )
 
-    clean_result = re.sub(
-        r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", result)
+    if result == None:
+        return 'админ тупой дебил и не смог написать нормальное сооьщение об ошибке, но кароче после 20 попыток сгенерить прикол ниче не получилось, мож быть нету права на чтение сообщений или программист дебил ну в общем держу в курсе'
 
-    if add_stars:
-        try:
-            mentions = re.findall('\<@!.*?\>', clean_result)
-            for mention in mentions:
-                clean_mention = re.sub('[<@\!>]', '', mention)
-                user = bot.get_user(int(clean_mention))
-                clean_result = clean_result.replace(
-                    mention, f'**{user.display_name}**')
-        except:
-            pass
-
-        try:
-            roles = re.findall('\<@&.*?\>', clean_result)
-            for role_mention in roles:
-                clean_role_mention = re.sub('[<@&>]', '', role_mention)
-                role = discord.utils.get(
-                    msg.guild.roles, id=int(clean_role_mention))
-                clean_result = clean_result.replace(
-                    role_mention, f'**{role.name}**')
-        except:
-            pass
     else:
-        try:
-            mentions = re.findall('\<@!.*?\>', clean_result)
-            for mention in mentions:
-                clean_mention = re.sub('[<@\!>]', '', mention)
-                user = bot.get_user(int(clean_mention))
-                clean_result = clean_result.replace(
-                    mention, f'@{user.display_name}')
-        except:
-            pass
+        clean_result = re.sub(
+            r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''', "[Link Deleted]", result)
 
-        try:
-            roles = re.findall('\<@&.*?\>', clean_result)
-            for role_mention in roles:
-                clean_role_mention = re.sub('[<@&>]', '', role_mention)
-                role = discord.utils.get(
-                    msg.guild.roles, id=int(clean_role_mention))
-                clean_result = clean_result.replace(
-                    role_mention, f'@{role.name}')
-        except:
-            pass
-
-    clean_result = re.sub('\<.*?\:.*?\:.*?\>', '', clean_result)
-
-    return clean_result
+        return clean_result
 
 
 class TextGen(commands.Cog, name='TextGen'):
@@ -184,7 +142,7 @@ class TextGen(commands.Cog, name='TextGen'):
                     result = result.upper()
                 await msg.channel.send(result)
 
-            elif '<@!{0}>'.format(self.bot.user.id) in msg.content:
+            elif '<@!{0}>'.format(self.bot.user.id) in msg.content or '<@{0}>'.format(self.bot.user.id) in msg.content:
                 result = await loop.run_in_executor(None, partial(get_generated_line, self.bot, msg))
                 chance = randint(1, 20)
                 if chance >= 1 and chance <= 5:

@@ -1,6 +1,8 @@
 import json
 import os
 from os.path import abspath, dirname
+
+import discord
 from cogs.Utils import Utils
 
 from discord.ext import commands
@@ -36,7 +38,14 @@ class Writter(commands.Cog):
                     if message.author.bot:
                         pass
                     else:
-                        f.write(message.content.lower().strip() + '\\')
+                        is_bad_word = False
+                        for badword in config['bad_start_words']:
+                            if message.content.startswith(badword):
+                                is_bad_word = True
+                                break
+                        if is_bad_word == False:
+                            f.write(discord.utils.escape_markdown(
+                                message.clean_content.lower().strip()) + '\\')
 
                         for file in message.attachments:
                             if file.url[-3::] == 'png' or file.url[-3::] == 'jpg' or file.url[-3::] == 'jpeg':
@@ -60,7 +69,6 @@ class Writter(commands.Cog):
         if msg.content.startswith('ai.') or msg.content.startswith('aic.'):
             pass
         else:
-            # try:
             if msg.author.bot:
                 pass
             else:
@@ -71,7 +79,8 @@ class Writter(commands.Cog):
                 else:
                     f = open(
                         filepath + '/../samples/{0}.txt'.format(msg.guild.id), 'a')
-                    f.write(msg.content.lower().strip() + '\\')
+                    f.write(discord.utils.escape_markdown(
+                        msg.clean_content.lower().strip()) + '\\')
 
                 ff = open(
                     filepath + '/../samples/{0}_img.txt'.format(msg.guild.id), 'a')
@@ -81,8 +90,6 @@ class Writter(commands.Cog):
                         ff.write(file.url + '\n')
 
             await self.bot.process_commands(msg)
-        # except:
-        #     pass
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
@@ -103,7 +110,13 @@ class Writter(commands.Cog):
                         elif message.content == '':
                             pass
                         else:
-                            f.write(message.content.lower().strip() + '\\')
+                            was_bad = False
+                            for badword in config['bad_start_words']:
+                                if message.content.startswith(badword):
+                                    was_bad = True
+
+                            f.write(discord.utils.escape_markdown(
+                                message.clean_content.lower().strip()) + '\\')
 
                     for file in message.attachments:
                         if file.url[-3::] == 'png' or file.url[-3::] == 'jpg' or file.url[-3::] == 'jpeg':
