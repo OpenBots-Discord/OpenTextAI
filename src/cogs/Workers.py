@@ -18,11 +18,8 @@ class Workers(commands.Cog, name='Workers'):
     async def status_updater(self, bot):
         while True:
             try:
-                members = 0
-                for guilds in self.bot.guilds:
-                    members += len(guilds.members)
                 await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                                         name='ai.help  ⼁  🖥   :  {0}  ⼁  👤  :  {1}'.format(len(self.bot.guilds), members)))
+                                                                         name='ai.help  ⼁  🖥   :  {0}'.format(len(self.bot.guilds))))
                 await asyncio.sleep(60)
             except:
                 pass
